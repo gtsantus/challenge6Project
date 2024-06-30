@@ -9,11 +9,15 @@ const ViewCards = () => {
   ];
 
   return (
-    <div>
-      <div>
-        {cards.map((card) => (
-          <Card key={card.id} name={card.name} image={card.image} />
-        ))}
+    <div className="container">
+      <div className="row">
+        <div className="col-sm-6 col-md-4 col-lg-3 mb-4">
+          <div>
+            {cards.map((card) => (
+              <Card key={card.id} name={card.name} image={card.image} />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

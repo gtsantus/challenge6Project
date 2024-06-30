@@ -28,16 +28,20 @@ Add Card
 # RESTful Routing
 Back End stuff, how are the Routes going to work?
 Services:
+User:
 Authenticate User -> Returns Token + _id + role
 signUp -> Returns Token + _id + role
 updatePassword -> Updates a currently logged in user
+Cards:
 getAllCards -> Returns an Array of all Cards (which are their own object)
 getCardById -> Returns a specific card
+addCard -> Adds a specific card
+updateCard -> Updates a specific card
+Decks:
 getAllDecks -> Returns all of a user's decks
 addDeck -> Creates a new deck
 updateDeck -> Updates a specific deck
-addCard -> Adds a specific card
-updateCard -> Updates a specific card
+
 
 # Technologies
 Testing Tools. Shouldn't need any external APIs since this is all our own stuff.

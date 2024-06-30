@@ -1,0 +1,29 @@
+import UserService from "../services/User.service.js";
+
+export default class UserController {
+    #service
+
+    constructor(service = new UserService()) {
+        this.#service = service;
+    }
+
+    signUp = async (req, res) => {
+        try {
+            const user = await this.#service.signUp(req.body);
+            res.header("X-Access-Token", user.accessToken).status(200).json(user);
+        } catch (e) {
+            console.log("ERROR: SignUp Error", e.message || e);
+            res.status(500).json({ message: e.message });
+        }
+    }
+
+    login = async (req, res) => {
+        try {
+            const user = await this.#service.login(req.body);
+            res.header("X-Access-Token", user.accessToken).status(200).json(user);
+        } catch (e) {
+            console.log("ERROR: invalid username/password");
+            res.status(401).json({ message: e.message });
+        }
+    }
+}

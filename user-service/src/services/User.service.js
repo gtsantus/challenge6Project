@@ -17,6 +17,7 @@ export default class UserService {
         });
 
         await newUser.save();
+        console.log(hashedPassword);
 
         const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
             expiresIn: 86400,
@@ -26,10 +27,9 @@ export default class UserService {
     }
 
     login = async ({ username, password }) => {
-        
         const user = await User.findOne({ username: username });
         if (!user) {
-            throw new Error("Invalid login details");
+            throw new Error("Invalid username");
         }
 
         const passwordMatches = await bcrypt.compare(password, user.password);
@@ -39,6 +39,8 @@ export default class UserService {
                 expiresIn: 86400,
             });
             return { accessToken: token, id: user._id };
+        } else {
+            throw new Error("Invalid password");
         };
     }
 }

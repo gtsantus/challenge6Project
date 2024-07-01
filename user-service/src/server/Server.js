@@ -9,16 +9,17 @@ export default class Server{
     #server;
 
     constructor(port, host, router) {
-    this.#app = express();
-    this.#port = port;
-    this.#host = host;
-    this.#server = null;
-    this.#router = router;
+        this.#app = express();
+        this.#port = port;
+        this.#host = host;
+        this.#server = null;
+        this.#router = router;
     }
 
     getApp = () => {
-    return this.#app;
-    };    
+        return this.#app;
+    };   
+    
     start = () => {
         this.#server = this.#app.listen(this.#port, this.#host, () => {
             console.log(`Server is listening on http://${this.#host}:${this.#port}`);

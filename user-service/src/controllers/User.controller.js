@@ -12,8 +12,15 @@ export default class UserController {
             const user = await this.#service.signUp(req.body);
             res.header("X-Access-Token", user.accessToken).status(200).json(user);
         } catch (e) {
-            console.log("ERROR: SignUp Error", e.message || e);
-            res.status(500).json({ message: e.message });
+            if(e.message === "That User already exists") {
+                console.log("ERROR: ", e.message || e);
+                res.status(409).json({ message: e.message });
+                return;
+            } else {
+                console.log("ERROR: SignUp Error", e.message || e);
+                res.status(500).json({ message: e.message });
+            }
+
         }
     }
 
@@ -22,7 +29,7 @@ export default class UserController {
             const user = await this.#service.login(req.body);
             res.header("X-Access-Token", user.accessToken).status(200).json(user);
         } catch (e) {
-            console.log("ERROR: invalid username/password");
+            console.log("ERROR: invalid username/password", e.message || e);
             res.status(401).json({ message: e.message });
         }
     }

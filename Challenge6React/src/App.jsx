@@ -6,18 +6,42 @@ import MakeDeck from "./pages/MakeDeck";
 import SignUp from "./pages/SignUp";
 import ViewCards from "./pages/ViewCards";
 import ViewDecks from "./pages/ViewDecks";
-import { useState } from "react";
+import AuthService from "./services/auth.service";
+import { useState, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 
 const App = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(undefined);
+  const [showAdminContent, setShowAdminContent] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const user = await AuthService.getCurrentUser();
+      if (user) {
+        setCurrentUser(user);
+        setShowAdminContent(user.admin);
+      } else {
+        setCurrentUser(undefined);
+        setShowAdminContent(false);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <>
-      <Header loggedIn={loggedIn} />
+      <Header
+        currentUser={currentUser}
+        setCurrentUser={setCurrentUser}
+        showAdminContent={showAdminContent}
+      />
       <div className="background-image">
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/Login" element={<Login setLoggedIn={setLoggedIn} />} />
+          <Route
+            path="/Login"
+            element={<Login setCurrentUser={setCurrentUser} />}
+          />
           <Route path="/SignUp" element={<SignUp />} />
           <Route path="/AddCard" element={<AddCard />} />
           <Route path="/ViewCards" element={<ViewCards />} />

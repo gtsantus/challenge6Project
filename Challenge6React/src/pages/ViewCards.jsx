@@ -1,12 +1,24 @@
-import Card from "../components/Card"; // Adjust the import path as necessary
+import Card from "../components/Card";
+import cardService from "../services/cards.service.js";
+import { useState, useEffect } from "react";
 
 const ViewCards = () => {
-  // Example array of card data
-  const cards = [
-    { id: 1, name: "Card 1", image: "path/to/image1.jpg" },
-    { id: 2, name: "Card 2", image: "path/to/image2.jpg" },
-    // Add more card objects here
-  ];
+  const [cards, setCards] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCards = async () => {
+      const cards = await cardService.getAllCards();
+      setCards(cards);
+      setLoading(false);
+    };
+
+    fetchCards;
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="container">

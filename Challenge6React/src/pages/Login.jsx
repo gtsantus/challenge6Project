@@ -1,59 +1,34 @@
 import { useState } from "react";
+import authService from "../services/auth.service";
+import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
-/* import login from "../services/authenticateUser";
-import signUp from "../services/addNewUser";
-import { useNavigate } from "react-router-dom"; */
-
-const LoginScreen = () => {
+const LoginScreen = ({ setCurrentUser }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [invalidDetails] = useState(false);
-  /*const [newUser, setNewUser] = useState(false);
-  const navigate = useNavigate(); */
+  const [invalidDetails, setInvalidDetails] = useState(false);
+  const navigate = useNavigate();
 
-  /* async function formSubmit(e) {
+  async function formSubmit(e) {
     e.preventDefault();
-    if (newUser) {
-      await signUpAttempt();
-    } else {
-      await loginAttempt();
-    }
-    await updateAuth();
-    if (auth) {
-      navigate("/");
-    }
+    await loginAttempt();
   }
 
-  const signUpAttempt = async () => {
-    if (validatePassword() && validateEmail()) {
-      const signUpResponse = await signUp(username, password);
-      setInvalidDetails(false);
-      localStorage.setItem("accessToken", signUpResponse.accessToken);
-      localStorage.setItem("userId", signUpResponse.id);
-    } else {
-      setInvalidDetails(true);
-      console.log("invalid Username or Password");
-    }
-  };
-
   const loginAttempt = async () => {
-    if (validateEmail()) {
-      const loginResponse = await login(username, password);
-      console.log(loginResponse);
+    if (validatePassword()) {
+      const user = await authService.login(username, password);
       setInvalidDetails(false);
-      localStorage.setItem("accessToken", loginResponse.accessToken);
-      localStorage.setItem("userId", loginResponse.id);
+      if (authService.getCurrentUser()) {
+        console.log(setCurrentUser);
+        setCurrentUser(authService.getCurrentUser());
+        navigate("/");
+      } else {
+        console.dir(user);
+        setInvalidDetails(true);
+      }
     } else {
       setInvalidDetails(true);
-      console.log("invalid Username or Password");
-    }
-  };
-
-  const updateAuth = async () => {
-    const token = localStorage.getItem("accessToken");
-    const id = localStorage.getItem("userId");
-    if (token && id) {
-      setAuth({ token, id });
+      console.log("Invalid Username or Password");
     }
   };
 
@@ -62,14 +37,6 @@ const LoginScreen = () => {
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*[1-9])(?=.*[@$!%*?&])[A-Za-zd@$!%*?&1-9]{8,}$/;
     return passwordRegEx.test(password);
   };
-
-  const handleNewUserBox = () => {
-    setNewUser(!newUser);
-  }; */
-
-  function formSubmit() {
-    console.log("Form submitted");
-  }
 
   return (
     <div className="container-fluid d-flex justify-content-center align-items-center">
@@ -107,6 +74,7 @@ const LoginScreen = () => {
                 />
               </div>
               <div className="d-grid gap-2">
+                <a href="/SignUp">New User? Sign Up Here!</a>
                 <button type="submit" className="btn btn-primary">
                   Login
                 </button>
@@ -117,6 +85,10 @@ const LoginScreen = () => {
       </div>
     </div>
   );
+};
+
+LoginScreen.propTypes = {
+  setCurrentUser: PropTypes.func.isRequired,
 };
 
 export default LoginScreen;

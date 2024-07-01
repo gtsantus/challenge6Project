@@ -1,11 +1,20 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import PropTypes from "prop-types";
+import authService from "../services/auth.service";
 
-const Header = (loggedIn) => {
-  loggedIn = loggedIn.loggedIn;
+const Header = ({ currentUser, setCurrentUser, showAdminContent }) => {
+  const loggedIn = Boolean(currentUser);
   const navigate = useNavigate();
 
   const navigateToLogin = () => {
     navigate("/Login");
+  };
+
+  const logOut = () => {
+    console.log("current user", currentUser);
+    authService.logout();
+    setCurrentUser(undefined);
+    navigate("/");
   };
 
   return (
@@ -21,17 +30,24 @@ const Header = (loggedIn) => {
             className="me-5"
             style={{ width: "75px", height: "75px" }}
           />
-          <a href="/" className="me-5">
+          <Link to="/" className="me-5">
             Home
-          </a>
-          <a href="/ViewDecks" className="me-5">
+          </Link>
+          <Link to="/ViewDecks" className="me-5">
             My Decks
-          </a>
-          <a href="/ViewCards">All Cards</a>
+          </Link>
+          <Link to="/ViewCards" className="me-5">
+            All Cards
+          </Link>
+          {showAdminContent && (
+            <div>
+              <Link to="/AddCard">Add Card</Link>
+            </div>
+          )}
         </div>
         {loggedIn && (
           <div>
-            <button type="button" className="btn btn-light">
+            <button type="button" className="btn btn-light" onClick={logOut}>
               Log Out
             </button>
           </div>
@@ -50,6 +66,12 @@ const Header = (loggedIn) => {
       </header>
     </div>
   );
+};
+
+Header.propTypes = {
+  currentUser: PropTypes.object,
+  setCurrentUser: PropTypes.func.isRequired,
+  showAdminContent: PropTypes.bool.isRequired,
 };
 
 export default Header;

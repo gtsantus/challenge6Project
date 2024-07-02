@@ -1,0 +1,81 @@
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 400px;
+    overflow: hidden;
+    position: relative;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    color: black;
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    align-items: center;
+}
+
+.card-header .card-name {
+    flex-grow: 1;
+    margin-right: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cost-circle {
+    flex-shrink: 0;
+    width: 25px;
+    height: 25px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 50%;
+    border: 1px solid #000000;
+}
+
+.faction-default {
+    background-color: #f0f0f0;
+    /* Default background color if faction is not recognized */
+}
+
+.faction-orange {
+    background-color: #dc3545;
+}
+
+.faction-grey {
+    background-color: #dc3545;
+}
+
+.faction-silver {
+    background-color: #DDDDDC;
+    color: #000000;
+}
+
+.faction-green {
+    background-color: #dc3545;
+}
+
+.faction-brown {
+    background-color: #dc3545;
+}
+
+.faction-purple {
+    background-color: #1A2E41;
+    color: #7FCAE2;
+}
+
+.faction-purple .card-header {
+    background-color: #19324A;
+    color: #2BB6E3;
+}
+
+.faction-silver .card-header {
+    background-color: #DDDDDC;
+    color: #E02636;
+}
+
+
+

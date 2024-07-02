@@ -17,13 +17,12 @@ export default class UserService {
         });
 
         await newUser.save();
-        console.log(hashedPassword);
 
         const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
             expiresIn: 86400,
         });
 
-        return { accessToken: token, id: newUser._id }
+        return { accessToken: token, id: newUser._id, admin: user.admin }
     }
 
     login = async ({ username, password }) => {
@@ -38,7 +37,7 @@ export default class UserService {
             const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
                 expiresIn: 86400,
             });
-            return { accessToken: token, id: user._id };
+            return { accessToken: token, id: user._id, admin: user.admin };
         } else {
             throw new Error("Invalid password");
         };

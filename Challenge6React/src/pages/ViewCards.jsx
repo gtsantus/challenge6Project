@@ -13,7 +13,7 @@ const ViewCards = () => {
       setLoading(false);
     };
 
-    fetchCards;
+    fetchCards();
   }, []);
 
   if (loading) {
@@ -23,13 +23,11 @@ const ViewCards = () => {
   return (
     <div className="container">
       <div className="row">
-        <div className="col-sm-6 col-md-4 col-lg-3 mb-4">
-          <div>
-            {cards.map((card) => (
-              <Card key={card.id} name={card.name} image={card.image} />
-            ))}
+        {cards.map((card) => (
+          <div className="col-sm-6 col-md-4 col-lg-3 mb-4" key={card._id}>
+            <Card displayCard={card} />
           </div>
-        </div>
+        ))}
       </div>
     </div>
   );

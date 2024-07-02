@@ -1,7 +1,6 @@
 import Router from "express";
-import UserValidator from "../middleware/User.validator.js";
 
-export default class UsersRoutes{ 
+export default class CardsRoutes{ 
     #controller;
     #routerStartPoint;
     #router;
@@ -14,8 +13,9 @@ export default class UsersRoutes{
     }
 
     #initialiseRoutes = () => {
-        this.#router.post("/login", this.#controller.login);
-        this.#router.post("/signUp", UserValidator.validateUser(), this.#controller.signUp);
+        //this.#router.post("/addCard", [authJwt.verifyToken], this.#controller.addCard);
+        this.#router.get("/getAllCards", this.#controller.getAllCards);
+        this.#router.get("/getCard", this.#controller.getCard);
     };
 
     getRouter = () => {

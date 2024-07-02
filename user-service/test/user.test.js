@@ -6,8 +6,8 @@ import chaiHttp from 'chai-http';
 
 import Server from '../src/server/Server.js';
 import testData from './testData/sampleUser.js';
-import UserController from "../src/controllers/User.Controller.js";
-import UserRoutes from "../src/routes/Users.Routes.js";
+import UserController from "../src/controllers/User.controller.js";
+import UserRoutes from "../src/routes/Users.routes.js";
 import Config from "../src/config/Config.js";
 import Database from "../src/database/Database.js";
 
@@ -64,6 +64,7 @@ describe('Testing user login and sign up', () => {
             expect(res).to.have.status(200);
             expect(res.body).to.have.property('accessToken');
             expect(res.body).to.have.property('id');
+            console.log(res.body);
         });
 
         it('should return a 409 error if username is already used', async () => {
@@ -72,6 +73,9 @@ describe('Testing user login and sign up', () => {
                 .send({ username: 'testUser', password: 'TestPassword1!' });
             expect(res).to.have.status(409);
         });
+
+        //on creation of a new user, the password should be hashed
+        //on creation of a new user, the admin field should be false
     });
 
     describe('POST /login', () => {

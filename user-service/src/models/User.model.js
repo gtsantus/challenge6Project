@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const deckSchema = new mongoose.Schema({
     name: { type: String, required: true },
+    faction: { type: String, enum: ['Tech', 'Undead', 'Order', 'Druid', 'Guerilla', 'Wizard'], required: true },
     cards: [
         {
             type: mongoose.Schema.Types.ObjectId,

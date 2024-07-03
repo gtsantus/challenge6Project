@@ -45,8 +45,14 @@ const App = () => {
           <Route path="/SignUp" element={<SignUp />} />
           <Route path="/AddCard" element={<AddCard />} />
           <Route path="/ViewCards" element={<ViewCards />} />
-          <Route path="/ViewDecks" element={<ViewDecks />} />
-          <Route path="/MakeDeck" element={<MakeDeck />} />
+          <Route
+            path="/ViewDecks"
+            element={<ViewDecks currentUser={currentUser} />}
+          />
+          <Route
+            path="/MakeDeck"
+            element={<MakeDeck currentUser={currentUser} />}
+          />
         </Routes>
       </div>
     </>

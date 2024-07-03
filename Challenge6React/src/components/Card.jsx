@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
-import "./CardStyles.css";
+import "../styles/CardStyles.css";
 
-const Card = ({ displayCard }) => {
+const Card = ({ displayCard, onAddToDeck, showAddToDeckButton = false }) => {
   const formatCardText = (text) => {
     return text.split(" ").map((word, index, words) => {
       const nextWord = words[index + 1] ? ` ${words[index + 1]}` : "";
@@ -64,12 +64,22 @@ const Card = ({ displayCard }) => {
           </div>
         </div>
       )}
+      {showAddToDeckButton && (
+        <button
+          className="btn btn-primary"
+          onClick={() => onAddToDeck(displayCard)}
+        >
+          Add to Deck
+        </button>
+      )}
     </div>
   );
 };
 
 Card.propTypes = {
   displayCard: PropTypes.object.isRequired,
+  onAddToDeck: PropTypes.func,
+  showAddToDeckButton: PropTypes.bool,
 };
 
 export default Card;

@@ -8,9 +8,15 @@ const ViewCards = () => {
 
   useEffect(() => {
     const fetchCards = async () => {
-      const cards = await cardService.getAllCards();
-      setCards(cards);
-      setLoading(false);
+      try {
+        const cards = await cardService.getAllCards();
+        setCards(cards || []);
+      } catch (error) {
+        console.error("Failed to fetch cards:", error);
+        setCards([]);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchCards();

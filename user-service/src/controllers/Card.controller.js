@@ -18,9 +18,15 @@ export default class CardController {
 
     getCard = async (req, res) => {
         try {
-            const card = await this.#service.getCardById(req.params.id);
+            const card = await this.#service.getCardById(req.query.id);
             res.json(card);
         } catch (e) {
+            if (e.message === "Failed to Find Card") {
+                console.log("ERROR: ", e.message || e);
+                res.status(404).json({ message: e.message });
+                return;
+            }
+            console.log("ERROR: GetCard Error: ", e.message || e);
             res.status(500).json({ message: e.message });
         }
     }

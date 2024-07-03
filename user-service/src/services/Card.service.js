@@ -13,7 +13,11 @@ export default class UserService {
 
     getCardById = async (id) => {
         try {
-            return await Card.findById(id);
+            const temp = await Card.findById(id);
+            if (!temp) {
+                throw new Error("Failed to Find Card");
+            }
+            return temp;
         } catch (e) {
             throw e;
         }

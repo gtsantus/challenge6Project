@@ -11,7 +11,6 @@ const Header = ({ currentUser, setCurrentUser, showAdminContent }) => {
   };
 
   const logOut = () => {
-    console.log("current user", currentUser);
     authService.logout();
     setCurrentUser(undefined);
     navigate("/");

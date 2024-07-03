@@ -12,7 +12,7 @@ const getAllCards = async () => {
 
 const getCardById = async (id) => {
 	try {
-		const response = await axios.get(`http://localhost:4000/getCard`, { id });
+		const response = await axios.get(`http://localhost:4000/getCard`, { params: { id } });
 		return response.data;
 	} catch (e) {
 		console.log(e.message);

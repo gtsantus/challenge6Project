@@ -19,7 +19,6 @@ const LoginScreen = ({ setCurrentUser }) => {
       const user = await authService.login(username, password);
       setInvalidDetails(false);
       if (authService.getCurrentUser()) {
-        console.log(setCurrentUser);
         setCurrentUser(authService.getCurrentUser());
         navigate("/");
       } else {

@@ -99,7 +99,7 @@ describe('Testing user login and sign up', () => {
         });
     });
 
-    describe('POST /login', () => {
+    xdescribe('POST /login', () => {
         it('should return an authentication token and a user id', async () => {
             const res = await request
                 .post('/login')

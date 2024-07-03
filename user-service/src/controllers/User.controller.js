@@ -31,7 +31,7 @@ export default class UserController {
         } catch (e) {
             if (e.message === "Invalid username") {
                 console.log("ERROR: ", e.message || e);
-                res.status(404).json({ message: e.message });
+                res.status(401).json({ message: e.message });
                 return;
             } else if (e.message === "Invalid password") {
                 console.log("ERROR: ", e.message || e);

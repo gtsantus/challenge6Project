@@ -15,7 +15,7 @@ export default class UsersRoutes{
     }
 
     #initialiseRoutes = () => {
-        this.#router.post("/login", this.#controller.login);
+        this.#router.post("/login", UserValidator.validateUser(), this.#controller.login);
         this.#router.post("/signUp", UserValidator.validateUser(), this.#controller.signUp);
         this.#router.post("/addDeck", [authMiddleWare.verifyToken], this.#controller.addDeck);
         this.#router.put("/updateDeck", [authMiddleWare.verifyToken], this.#controller.updateDeck);

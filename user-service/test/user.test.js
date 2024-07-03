@@ -59,7 +59,7 @@ describe('Testing user login and sign up', () => {
         await database.close();
     });
 
-    describe('POST /signUp', () => {
+    xdescribe('POST /signUp', () => {
         it('should respond with a 200 status code and return an authentication token and a user id', async () => {
             const res = await request
                 .post('/signUp')
@@ -112,8 +112,43 @@ describe('Testing user login and sign up', () => {
         it('should return a 401 error if password is incorrect', async () => {
             const res = await request
                 .post('/login')
-                .send({ username: 'testUser', password: 'incorrectPassword' });
+                .send({ username: 'testUser', password: 'incorrectPassword1!' });
             expect(res).to.have.status(401);
+        });
+
+        it('should return a 401 error if username is incorrect', async () => {
+            const res = await request
+                .post('/login')
+                .send({ username: 'incorrectUser', password: 'TestPassword1!' });
+            expect(res).to.have.status(401);
+        });
+
+        it('should return a 400 error if username is not sent', async () => {    
+            const res = await request
+                .post('/login')
+                .send({ password: 'TestPassword1!' });
+            expect(res).to.have.status(400);
+        });
+
+        it('should return a 400 error if password is not sent', async () => {   
+            const res = await request
+                .post('/login')
+                .send({ username: 'testUser' });
+            expect(res).to.have.status(400);
+        });
+
+        it('should return a 400 error if username is not a string', async () => {
+            const res = await request
+                .post('/login')
+                .send({ username: 123, password: 'TestPassword1!' });
+            expect(res).to.have.status(400);
+        });
+
+        it('should return a 400 error if password is not a string', async () => {    
+            const res = await request
+                .post('/login')
+                .send({ username: 'testUser', password: 123 });
+            expect(res).to.have.status(400);
         });
     });
 

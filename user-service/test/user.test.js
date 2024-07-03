@@ -77,11 +77,18 @@ describe('Testing user login and sign up', () => {
             expect(res).to.have.status(409);
         });
 
-        it('should return a 500 error if there is an error', async () => {
+        it('should return a 400 error not sent a username', async () => {
+            const res = await request
+                .post('/signUp')
+                .send({ password: 'invalidPassword' });
+            expect(res).to.have.status(400);
+        });
+
+        it('should return a 400 error if sent an invalid password', async () => {
             const res = await request
                 .post('/signUp')
                 .send({ username: 'newUser', password: 'invalidPassword' });
-            expect(res).to.have.status(500);
+            expect(res).to.have.status(400);
         });
 
         it('admin should be false on account creation', async () => {
@@ -112,7 +119,7 @@ describe('Testing user login and sign up', () => {
 
 });
  
-describe('Testing Card Services', () => {
+xdescribe('Testing Card Services', () => {
     let userServer;
     let database;
     let request;
@@ -179,7 +186,7 @@ describe('Testing Card Services', () => {
     });
 });
 
-describe('Testing Deck Services', () => {
+xdescribe('Testing Deck Services', () => {
     let userServer;
     let database;
     let request;

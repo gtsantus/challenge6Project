@@ -1,6 +1,6 @@
 import { get } from "mongoose";
 import Card from "../models/Card.model.js";
-import User from "../models/User.model.js";
+
 
 export default class UserService {
     getAllCards = async () => {
@@ -25,8 +25,8 @@ export default class UserService {
 
     addCard = async (card) => {
         try {
-            const newCard = new Card(card.card);
-            if (await User.findOne({ name: newCard.name })) {
+            const newCard = new Card(card);
+            if (await Card.findOne({ name: newCard.name })) {
                 throw new Error("Card already exists");
             };
             return await newCard.save();

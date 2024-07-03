@@ -17,10 +17,10 @@ export default class UsersRoutes{
     #initialiseRoutes = () => {
         this.#router.post("/login", UserValidator.validateUser(), this.#controller.login);
         this.#router.post("/signUp", UserValidator.validateUser(), this.#controller.signUp);
-        this.#router.post("/addDeck", [authMiddleWare.verifyToken], this.#controller.addDeck);
-        this.#router.put("/updateDeck", [authMiddleWare.verifyToken], this.#controller.updateDeck);
-        this.#router.get("/getDecks", [authMiddleWare.verifyToken], this.#controller.getDecks);
-        this.#router.delete("/deleteDeck", [authMiddleWare.verifyToken], this.#controller.deleteDeck);
+        this.#router.post("/addDeck", authMiddleWare.verifyToken, this.#controller.addDeck);
+        this.#router.put("/updateDeck", authMiddleWare.verifyToken, this.#controller.updateDeck);
+        this.#router.get("/getDecks", authMiddleWare.verifyToken, this.#controller.getDecks);
+        this.#router.delete("/deleteDeck", authMiddleWare.verifyToken, this.#controller.deleteDeck);
     };
 
     getRouter = () => {

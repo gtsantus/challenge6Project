@@ -1,5 +1,6 @@
 import Router from "express";
 import authMiddleWare from "../middleware/authJwt.js";
+import CardValidator from "../middleware/Card.validator.js";
 
 export default class CardsRoutes{ 
     #controller;
@@ -15,7 +16,7 @@ export default class CardsRoutes{
     }
 
     #initialiseRoutes = () => {
-        this.#router.post("/addCard", [authMiddleWare.verifyToken, authMiddleWare.isAdmin], this.#controller.addCard);
+        this.#router.post("/addCard", [authMiddleWare.verifyToken, authMiddleWare.isAdmin, CardValidator.validateCard()], this.#controller.addCard);
         this.#router.get("/getAllCards", this.#controller.getAllCards);
         this.#router.get("/getCard", this.#controller.getCard);
     };

@@ -9,7 +9,7 @@ const cardSchema = new mongoose.Schema({
     toughness: { type: String},
     rows: [{ type: String, enum: ['Front', 'Middle', 'Back'], required: true }],
     cardText: { type: String },
-    flavorText: { type: String },
+    flavourText: { type: String },
     legendary: { type: Boolean, required: true, default: false},
 });
 

@@ -11,13 +11,14 @@ export default class AuthMiddleware{
             const userObj = JSON.parse(req.cookies.user);
             token = userObj.accessToken;
         }
+
         if (!token) {
             return res.status(403).json({ message: "No token provided" });
         }
 
         jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
             if (error) {
-                return res.status(401).json({ message: "Unauthorized" });
+                return res.status(403).json({ message: "Unauthorized" });
             } else {
                 req.userId = decoded.id;
                 next();

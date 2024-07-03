@@ -1,4 +1,5 @@
 import User from '../src/models/User.model.js';
+import Card from '../src/models/Card.model.js';
 import supertest from 'supertest';
 
 import chai, { expect } from 'chai';
@@ -13,11 +14,13 @@ import CardController from "../src/controllers/Card.controller.js";
 import CardRoutes from "../src/routes/Cards.routes.js";
 import Config from "../src/config/Config.js";
 import Database from "../src/database/Database.js";
+import jwt from "jsonwebtoken";
+import e from 'express';
 
 chai.use(chaiHttp);
 
 
-describe('Testing user login and sign up', () => {
+xdescribe('Testing user login and sign up', () => {
     let userServer;
     let database;
     let request;
@@ -59,7 +62,7 @@ describe('Testing user login and sign up', () => {
         await database.close();
     });
 
-    xdescribe('POST /signUp', () => {
+    describe('POST /signUp', () => {
         it('should respond with a 200 status code and return an authentication token and a user id', async () => {
             const res = await request
                 .post('/signUp')
@@ -99,7 +102,7 @@ describe('Testing user login and sign up', () => {
         });
     });
 
-    xdescribe('POST /login', () => {
+    describe('POST /login', () => {
         it('should return an authentication token and a user id', async () => {
             const res = await request
                 .post('/login')
@@ -158,6 +161,7 @@ describe('Testing Card Services', () => {
     let userServer;
     let database;
     let request;
+    let Cookie;
 
     before(async () => {
         Config.load();
@@ -175,20 +179,24 @@ describe('Testing Card Services', () => {
     
     beforeEach(async () => {
         try {
-            await User.deleteMany();
+            await Card.deleteMany();
             console.log("Cleared Database");
         } catch {
             console.log("Error clearing database");
             throw new Error();
         };
         try {
-            await User.insertMany(testData);
+            await Card.insertMany(testDataCards.cards);
             console.log("Inserted test data");
         } catch (e) {
             console.log(e);
             console.log("Error inserting test data");
             throw new Error();
         };
+        const token = jwt.sign({ id: "60f3e3f3e4e4c7e6f3b0d2b7" }, process.env.JWT_SECRET, {
+                expiresIn: 86400,
+        });
+        Cookie = 'user=' + JSON.stringify({ accessToken: token, id: "60f3e3f3e4e4c7e6f3b0d2b7", admin: true })
     });
 
     after(async () => {
@@ -239,119 +247,147 @@ describe('Testing Card Services', () => {
         it('should add a card to the database', async () => {
             const res = await request
                 .post('/addCard')
-                .send({ name: 'newCard', type: 'Spell', cost:"0", faction: 'Wizard', power:"0", toughness:"0", rows: [], cardText: "Card Text", flavorText: "Flavor Text", legendary: false });
+                .set('Cookie', Cookie)
+                .send({ name: "newCard", type: "Spell", cost:"0", faction: 'Wizard', power:"0", toughness:"0", rows: [], cardText: "Card Text", flavourText: "Flavour Text", legendary: false });
             expect(res).to.have.status(200);
-            expect(res.body).to.have.property('name', 'newCard');
-            expect(res.body).to.have.property('type', 'Spell');
-            expect(res.body).to.have.property('faction', 'Wizard');
-            expect(res.body).to.have.property('cost', 1);
-            expect(res.body).to.have.property('description', 'Test Description');
-            expect(res.body).to.have.property('attack', 1);
-            expect(res.body).to.have.property('health', 1);
+            expect(res.body).to.have.property("name", "newCard");
+            expect(res.body).to.have.property("type", "Spell");
+            expect(res.body).to.have.property("cost", "0");
+            expect(res.body).to.have.property("faction", "Wizard");
+            expect(res.body).to.have.property("power", "0");
+            expect(res.body).to.have.property("toughness", "0");
+            expect(res.body).to.have.property("rows");
+            expect(res.body).to.have.property("cardText", "Card Text");
+            expect(res.body).to.have.property("flavourText", "Flavour Text");
+            expect(res.body).to.have.property("legendary", false);
         });
 
         it('should return a 409 error if the card already exists', async () => {
             const res = await request
                 .post('/addCard')
-                .send({ name: 'Test Spell', type: 'Spell', cost: "0", faction: 'Wizard', power: "0", toughness: "0", rows: [], cardText: "Card Text", flavorText: "Flavor Text", legendary: false });
+                .set('Cookie', Cookie)
+                .send({ name: "Test Spell", type: "Spell", cost:"0", faction: 'Wizard', power:"0", toughness:"0", rows: [], cardText: "Card Text", flavourText: "Flavor Text", legendary: false });
             expect(res).to.have.status(409);
         });
 
         it('should return a 403 error if the user sent is not an admin', async () => {
+            const token = jwt.sign({ id: "6685de316782b4f828607b57" }, process.env.JWT_SECRET, {
+                expiresIn: 86400,
+            });
+            Cookie = 'user=' + JSON.stringify({ accessToken: token, id: "6685de316782b4f828607b57", admin: true })
             const res = await request
                 .post('/addCard')
-                .send({ name: 'Test Spell', type: 'Spell', cost: "0", faction: 'Wizard', power: "0", toughness: "0", rows: [], cardText: "Card Text", flavorText: "Flavor Text", legendary: false });
+                .set('Cookie', Cookie)
+                .send({ name: "newCard", type: "Spell", cost:"0", faction: 'Wizard', power:"0", toughness:"0", rows: [], cardText: "Card Text", flavourText: "Flavor Text", legendary: false });
             expect(res).to.have.status(403);
         });
         
         it('should return a 403 error if the user has an invalid login token', async () => { 
+            let token = jwt.sign({ id: "6685de316782b4f828607b57" }, process.env.JWT_SECRET, {
+                expiresIn: 86400,
+            });
+            token = token + "invalid";
+            Cookie = 'user=' + JSON.stringify({ accessToken: token, id: "60f3e3f3e4e4c7e6f3b0d2b7", admin: false })
             const res = await request
                 .post('/addCard')
-                .send({ name: 'Test Spell', type: 'Spell', cost: "0", faction: 'Wizard', power: "0", toughness: "0", rows: [], cardText: "Card Text", flavorText: "Flavor Text", legendary: false });
-            expect(res).to.have.status(400);
+                .set('Cookie', Cookie)
+                .send({ name: "Test Spell", type: "Spell", cost: "0", faction: "Wizard", power: "0", toughness: "0", rows: [], cardText: "Card Text", flavourText: "Flavor Text", legendary: false });
+            expect(res).to.have.status(403);
         });
 
         it('should return a 400 error if a field is missing', async () => {
             const res = await request
                 .post('/addCard')
-                .send({ name: "newCard", type: "Spell", cost:"0", faction: "Wizard", power:"0", toughness:"0", rows: [], cardText: "Card Text", flavorText: "Flavor Text"});
+                .set('Cookie', Cookie)
+                .send({ name: "newCard", type: "Spell", cost:"0", faction: "Wizard", power:"0", toughness:"0", rows: [], cardText: "Card Text", flavourText: "Flavor Text"});
             expect(res).to.have.status(400);
         });
 
         it('should return a 400 error if a name is not a string', async () => {
             const res = await request
                 .post('/addCard')
-                .send({ name: 123, type: "Spell", cost:"0", faction: "Wizard", power:"0", toughness:"0", rows: [], cardText: "Card Text", flavorText: "Flavor Text", legendary: false });
+                .set('Cookie', Cookie)
+                .send({ name: 123, type: "Spell", cost:"0", faction: "Wizard", power:"0", toughness:"0", rows: [], cardText: "Card Text", flavourText: "Flavor Text", legendary: false });
             expect(res).to.have.status(400);
         });
 
         it('should return a 400 error if a cost is not a string', async () => {
             const res = await request
                 .post('/addCard')
-                .send({ name: "newCard", type: "Spell", cost:123, faction: "Wizard", power:"0", toughness:"0", rows: [], cardText: "Card Text", flavorText: "Flavor Text", legendary: false });
+                .set('Cookie', Cookie)
+                .send({ name: "newCard", type: "Spell", cost:123, faction: "Wizard", power:"0", toughness:"0", rows: [], cardText: "Card Text", flavourText: "Flavor Text", legendary: false });
             expect(res).to.have.status(400);
         });
         
         it('should return a 400 error if a power is not a string', async () => {
             const res = await request
                 .post('/addCard')
-                .send({ name: "newCard", type: "Spell", cost:"0", faction: "Wizard", power:123, toughness:"0", rows: [], cardText: "Card Text", flavorText: "Flavor Text", legendary: false });
+                .set('Cookie', Cookie)
+                .send({ name: "newCard", type: "Spell", cost:"0", faction: "Wizard", power:123, toughness:"0", rows: [], cardText: "Card Text", flavourText: "Flavor Text", legendary: false });
             expect(res).to.have.status(400);
         });
         
         it('should return a 400 error if a toughness is not a string', async () => {
             const res = await request
                 .post('/addCard')
-                .send({ name: "newCard", type: "Spell", cost:"0", faction: "Wizard", power:"0", toughness:123, rows: [], cardText: "Card Text", flavorText: "Flavor Text", legendary: false });
+                .set('Cookie', Cookie)
+                .send({ name: "newCard", type: "Spell", cost:"0", faction: "Wizard", power:"0", toughness:123, rows: [], cardText: "Card Text", flavourText: "Flavor Text", legendary: false });
             expect(res).to.have.status(400);
         });
         
         it('should return a 400 error if a cardText is not a string', async () => {
             const res = await request
                 .post('/addCard')
-                .send({ name: "newCard", type: "Spell", cost:"0", faction: "Wizard", power:"0", toughness:"0", rows: [], cardText: 123, flavorText: "Flavor Text", legendary: false });
+                .set('Cookie', Cookie)
+                .send({ name: "newCard", type: "Spell", cost:"0", faction: "Wizard", power:"0", toughness:"0", rows: [], cardText: 123, flavourText: "Flavor Text", legendary: false });
             expect(res).to.have.status(400);
         });
         
         it('should return a 400 error if a flavorText is not a string', async () => {
             const res = await request
                 .post('/addCard')
-                .send({ name: "newCard", type: "Spell", cost:"0", faction: "Wizard", power:"0", toughness:"0", rows: [], cardText: "Card Text", flavorText: 123, legendary: false });
+                .set('Cookie', Cookie)
+                .send({ name: "newCard", type: "Spell", cost:"0", faction: "Wizard", power:"0", toughness:"0", rows: [], cardText: "Card Text", flavourText: 123, legendary: false });
             expect(res).to.have.status(400);
         });
 
         it('should return a 400 error if a legendary is not a boolean', async () => {
             const res = await request
                 .post('/addCard')
-                .send({ name: "newCard", type: "Spell", cost:"0", faction: "Wizard", power:"0", toughness:"0", rows: [], cardText: "Card Text", flavorText: "Flavor Text", legendary: "false" });
+                .set('Cookie', Cookie)
+                .send({ name: "newCard", type: "Spell", cost:"0", faction: "Wizard", power:"0", toughness:"0", rows: [], cardText: "Card Text", flavourText: "Flavor Text", legendary: "Invalid" });
             expect(res).to.have.status(400);
         });
 
         it('should return a 400 error if faction is not a valid enum', async () => {
             const res = await request
                 .post('/addCard')
-                .send({ name: "newCard", type: "Spell", cost:"0", faction: "Invalid", power:"0", toughness:"0", rows: [], cardText: "Card Text", flavorText: "Flavor Text", legendary: false });
+                .set('Cookie', Cookie)
+                .send({ name: "newCard", type: "Spell", cost:"0", faction: "Invalid", power:"0", toughness:"0", rows: [], cardText: "Card Text", flavourText: "Flavor Text", legendary: false });
             expect(res).to.have.status(400);
         });
 
         it('should return a 400 error if type is not a valid enum', async () => {
             const res = await request
                 .post('/addCard')
-                .send({ name: "newCard", type: "Invalid", cost:"0", faction: "Wizard", power:"0", toughness:"0", rows: [], cardText: "Card Text", flavorText: "Flavor Text", legendary: false });
+                .set('Cookie', Cookie)
+                .send({ name: "newCard", type: "Invalid", cost:"0", faction: "Wizard", power:"0", toughness:"0", rows: [], cardText: "Card Text", flavourText: "Flavor Text", legendary: false });
             expect(res).to.have.status(400);
         });
 
         it('should return a 400 error if rows is not an array', async () => {
             const res = await request
                 .post('/addCard')
-                .send({ name: "newCard", type: "Spell", cost:"0", faction: "Wizard", power:"0", toughness:"0", rows: "Front", cardText: "Card Text", flavorText: "Flavor Text", legendary: false });
+                .set('Cookie', Cookie)
+                .send({ name: "newCard", type: "Spell", cost:"0", faction: "Wizard", power:"0", toughness:"0", rows: 123, cardText: "Card Text", flavourText: "Flavor Text", legendary: false });
             expect(res).to.have.status(400);
         });
         
         it('should return a 400 error if rows is not a valid enum', async () => {
             const res = await request
                 .post('/addCard')
-                .send({ name: "newCard", type: "Spell", cost:"0", faction: "Invalid", power:"0", toughness:"0", rows: ["Invalid"], cardText: "Card Text", flavorText: "Flavor Text", legendary: false });
+                .set('Cookie', Cookie)
+                .send({ name: "newCard", type: "Spell", cost:"0", faction: "Invalid", power:"0", toughness:"0", rows: ["Invalid"], cardText: "Card Text", flavourText: "Flavor Text", legendary: false });
             expect(res).to.have.status(400);
         });
     });

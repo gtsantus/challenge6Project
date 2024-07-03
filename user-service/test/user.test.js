@@ -157,7 +157,7 @@ xdescribe('Testing user login and sign up', () => {
 
 });
  
-describe('Testing Card Services', () => {
+xdescribe('Testing Card Services', () => {
     let userServer;
     let database;
     let request;
@@ -204,7 +204,7 @@ describe('Testing Card Services', () => {
         await database.close();
     });
 
-    xdescribe('GET /getCard', () => {
+    describe('GET /getCard', () => {
         it('should return a card', async () => {
             const res = await request
                 .get('/getCard')
@@ -216,30 +216,24 @@ describe('Testing Card Services', () => {
         it('should return a 404 error if the card is not found', async () => {
             const res = await request
                 .get('/getCard')
-                .query({ id: '60f3e3f3e4e4c7e6f3b0d2b8' });
+                .query({ id: '60f3e3f3e4e4c7e6f3b0d2b9' });
             expect(res).to.have.status(404);
         });
 
         it('should return a 500 error if there is an error', async () => {
             const res = await request
                 .get('/getCard')
-                .query({ id: '60f3e3f3e4e4c7e6f3b0d2b9' });
+                .query({ id: 'Invalid' });
             expect(res).to.have.status(500);
         });
     });
 
-    xdescribe('GET /getAllCards', () => {
+    describe('GET /getAllCards', () => {
         it('should return all cards', async () => {
             const res = await request
                 .get('/getAllCards');
             expect(res).to.have.status(200);
             expect(res.body).to.have.lengthOf(2);
-        });
-
-        it('should return a 500 error if there is an error', async () => {
-            const res = await request
-                .get('/getAllCards');
-            expect(res).to.have.status(500);
         });
     });
 

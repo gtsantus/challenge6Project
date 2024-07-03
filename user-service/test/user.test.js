@@ -77,8 +77,19 @@ describe('Testing user login and sign up', () => {
             expect(res).to.have.status(409);
         });
 
-        //on creation of a new user, the password should be hashed
-        //on creation of a new user, the admin field should be false
+        it('should return a 500 error if there is an error', async () => {
+            const res = await request
+                .post('/signUp')
+                .send({ username: 'newUser', password: 'invalidPassword' });
+            expect(res).to.have.status(500);
+        });
+
+        it('admin should be false on account creation', async () => {
+            const res = await request
+                .post('/signUp')
+                .send({ username: 'newUser', password: 'TestPassword1!' });
+            expect(res.body).to.have.property('admin', false);
+        });
     });
 
     describe('POST /login', () => {
@@ -99,7 +110,118 @@ describe('Testing user login and sign up', () => {
         });
     });
 
-    describe('POST /addDeck', () => {
+});
+ 
+describe('Testing Card Services', () => {
+    let userServer;
+    let database;
+    let request;
+
+    before(async () => {
+        Config.load();
+        const { PORT, HOST, DB_URI } = process.env;
+        const userController = new UserController();
+        const userRoutes = new UserRoutes(userController);
+        const cardController = new CardController();
+        const cardRoutes = new CardRoutes(cardController);
+        database = new Database(DB_URI);
+        await database.connect();
+        userServer = new Server(PORT, HOST, [userRoutes, cardRoutes]);
+        userServer.start();
+        request = supertest(userServer.getApp());
+    })
+    
+    beforeEach(async () => {
+        try {
+            await User.deleteMany();
+            console.log("Cleared Database");
+        } catch {
+            console.log("Error clearing database");
+            throw new Error();
+        };
+        try {
+            await User.insertMany(testData);
+            console.log("Inserted test data");
+        } catch (e) {
+            console.log(e);
+            console.log("Error inserting test data");
+            throw new Error();
+        };
+    });
+
+    after(async () => {
+        await userServer.close();
+        await database.close();
+    });
+
+    describe('GET /getCard', () => {
+        it('should return a card', async () => {
+            const res = await request
+                .get('/getCard')
+                .query({ id: '668309d9e79da29bc34cf21a' });
+            expect(res).to.have.status(200);
+            expect(res.body).to.have.property('name', 'Test Spell');
+        });
+
+        it('should return a 404 error if the card is not found', async () => {
+            const res = await request
+                .get('/getCard')
+                .query({ id: '60f3e3f3e4e4c7e6f3b0d2b8' });
+            expect(res).to.have.status(404);
+        });
+
+        it('should return a 500 error if there is an error', async () => {
+            const res = await request
+                .get('/getCard')
+                .query({ id: '60f3e3f3e4e4c7e6f3b0d2b9' });
+            expect(res).to.have.status(500);
+        });
+    });
+});
+
+describe('Testing Deck Services', () => {
+    let userServer;
+    let database;
+    let request;
+
+    before(async () => {
+        Config.load();
+        const { PORT, HOST, DB_URI } = process.env;
+        const userController = new UserController();
+        const userRoutes = new UserRoutes(userController);
+        const cardController = new CardController();
+        const cardRoutes = new CardRoutes(cardController);
+        database = new Database(DB_URI);
+        await database.connect();
+        userServer = new Server(PORT, HOST, [userRoutes, cardRoutes]);
+        userServer.start();
+        request = supertest(userServer.getApp());
+    })
+    
+    beforeEach(async () => {
+        try {
+            await User.deleteMany();
+            console.log("Cleared Database");
+        } catch {
+            console.log("Error clearing database");
+            throw new Error();
+        };
+        try {
+            await User.insertMany(testData);
+            console.log("Inserted test data");
+        } catch (e) {
+            console.log(e);
+            console.log("Error inserting test data");
+            throw new Error();
+        };
+    });
+
+    after(async () => {
+        await userServer.close();
+        await database.close();
+    });
+
+        describe('POST /addDeck', () => {
         it('should add a deck to the user', async () => {
             const res = await request
                 .post('/addDeck')
@@ -170,29 +292,4 @@ describe('Testing user login and sign up', () => {
             expect(res).to.have.status(500);
         });
     });
-
-
-    describe('GET /getCard', () => {
-        it('should return a card', async () => {
-            const res = await request
-                .get('/getCard')
-                .query({ id: '668309d9e79da29bc34cf21a' });
-            expect(res).to.have.status(200);
-            expect(res.body).to.have.property('name', 'Test Spell');
-        });
-
-        it('should return a 404 error if the card is not found', async () => {
-            const res = await request
-                .get('/getCard')
-                .query({ id: '60f3e3f3e4e4c7e6f3b0d2b8' });
-            expect(res).to.have.status(404);
-        });
-
-        it('should return a 500 error if there is an error', async () => {
-            const res = await request
-                .get('/getCard')
-                .query({ id: '60f3e3f3e4e4c7e6f3b0d2b9' });
-            expect(res).to.have.status(500);
-        });
-    });
- });
+});

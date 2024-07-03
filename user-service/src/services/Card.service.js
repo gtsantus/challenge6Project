@@ -22,4 +22,16 @@ export default class UserService {
             throw e;
         }
     }
+
+    addCard = async (card) => {
+        try {
+            const newCard = new Card(card.card);
+            if (await User.findOne({ name: newCard.name })) {
+                throw new Error("Card already exists");
+            };
+            return await newCard.save();
+        } catch (e) {
+            throw e;
+        }
+    }
 }

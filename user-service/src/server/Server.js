@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from 'cookie-parser';
 
 export default class Server{
     #app;
@@ -24,8 +25,9 @@ export default class Server{
         this.#server = this.#app.listen(this.#port, this.#host, () => {
             console.log(`Server is listening on http://${this.#host}:${this.#port}`);
         });
-        this.#app.use(cors());
+        this.#app.use(cors({ origin: 'http://localhost:5173', credentials: true}));
         this.#app.use(express.json());
+        this.#app.use(cookieParser());
         this.#app.use((req, res, next) => {
             res.header(
                 "Access-Control-Allow-Headers",

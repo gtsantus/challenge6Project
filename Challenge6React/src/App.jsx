@@ -9,6 +9,7 @@ import ViewDecks from "./pages/ViewDecks";
 import AuthService from "./services/auth.service";
 import { useState, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
+import "./App.css";
 
 const App = () => {
   const [currentUser, setCurrentUser] = useState(undefined);

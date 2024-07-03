@@ -7,7 +7,7 @@ const cardSchema = new mongoose.Schema({
     faction: { type: String, enum: ['Tech', 'Undead', 'Order', 'Druid', 'Guerilla', 'Wizard'], required: true },
     power: { type: String},
     toughness: { type: String},
-    rows: [{ type: String, required: true }],
+    rows: [{ type: String, enum: ['Front', 'Middle', 'Back'], required: true }],
     cardText: { type: String },
     flavorText: { type: String },
     legendary: { type: Boolean, required: true, default: false},

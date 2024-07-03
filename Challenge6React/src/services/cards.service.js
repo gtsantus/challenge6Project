@@ -20,9 +20,20 @@ const getCardById = async (id) => {
 	}
 };
 
+const addCard = async (card) => {
+	try {
+		const response = await axios.post(`http://localhost:4000/addCard`, { card }, { withCredentials: true });
+		return response.data;
+	} catch (e) {
+		console.log(e.message);
+		return e;
+	}
+}
+
 const cardsService = {
 	getAllCards,
-    getCardById,
+	getCardById,
+	addCard
 };
 
 export default cardsService;

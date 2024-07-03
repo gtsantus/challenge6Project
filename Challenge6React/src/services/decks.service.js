@@ -2,7 +2,7 @@ import axios from "axios";
 
 const getDecks = async (id) => {
     try {
-		const response = await axios.get(`http://localhost:4000/getDecks`, { params: { id } });
+		const response = await axios.get(`http://localhost:4000/getDecks`, { params: { id } }, { withCredentials: true });
 		return response.data;
 	} catch (e) {
 		console.log(e.message);
@@ -12,7 +12,7 @@ const getDecks = async (id) => {
 
 const updateDeck = async (id, deckName, deckCards) => {
 	try {
-		const response = await axios.put(`http://localhost:4000/updateDeck`, { id, deckName, deckCards});
+		const response = await axios.put(`http://localhost:4000/updateDeck`, { id, deckName, deckCards}, { withCredentials: true });
 		return response.data;
 	} catch (e) {
 		console.log(e.message);
@@ -22,7 +22,7 @@ const updateDeck = async (id, deckName, deckCards) => {
 
 const addDeck = async (id, deckName, deckFaction, deckCards) => {
     try {
-        const response = await axios.post(`http://localhost:4000/addDeck`, { id, deckName, deckFaction, deckCards});
+        const response = await axios.post(`http://localhost:4000/addDeck`, { id, deckName, deckFaction, deckCards}, { withCredentials: true });
         return response.data;
     } catch (e) {
         console.log(e.message);
@@ -32,7 +32,7 @@ const addDeck = async (id, deckName, deckFaction, deckCards) => {
  
 const deleteDeck = async (id, deckId) => {
 	try {
-		const response = await axios.delete(`http://localhost:4000/deleteDeck`, { params: { id, deckId } });
+		const response = await axios.delete(`http://localhost:4000/deleteDeck`, { params: { id, deckId } }, { withCredentials: true });
 		return response.data;
 	} catch (e) {
 		console.log(e.message);

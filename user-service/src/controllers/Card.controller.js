@@ -30,4 +30,20 @@ export default class CardController {
             res.status(500).json({ message: e.message });
         }
     }
+
+    addCard = async (req, res) => {
+        try {
+            const card = await this.#service.addCard(req.body);
+            res.status(200).json(card);
+        } catch (e) {
+            if(e.message === "Card already exists") {
+                console.log("ERROR: ", e.message || e);
+                res.status(409).json({ message: e.message });
+                return;
+            } else {
+                console.log("ERROR: AddCard Error: ", e.message || e);
+                res.status(500).json({ message: e.message });
+            }
+        }
+    }
 }

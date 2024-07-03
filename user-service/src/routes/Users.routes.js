@@ -1,5 +1,6 @@
 import Router from "express";
 import UserValidator from "../middleware/User.validator.js";
+import authMiddleWare from "../middleware/authJwt.js";
 
 export default class UsersRoutes{ 
     #controller;
@@ -16,10 +17,10 @@ export default class UsersRoutes{
     #initialiseRoutes = () => {
         this.#router.post("/login", this.#controller.login);
         this.#router.post("/signUp", UserValidator.validateUser(), this.#controller.signUp);
-        this.#router.post("/addDeck", this.#controller.addDeck);
-        this.#router.put("/updateDeck", this.#controller.updateDeck);
-        this.#router.get("/getDecks", this.#controller.getDecks);
-        this.#router.delete("/deleteDeck", this.#controller.deleteDeck);
+        this.#router.post("/addDeck", [authMiddleWare.verifyToken], this.#controller.addDeck);
+        this.#router.put("/updateDeck", [authMiddleWare.verifyToken], this.#controller.updateDeck);
+        this.#router.get("/getDecks", [authMiddleWare.verifyToken], this.#controller.getDecks);
+        this.#router.delete("/deleteDeck", [authMiddleWare.verifyToken], this.#controller.deleteDeck);
     };
 
     getRouter = () => {

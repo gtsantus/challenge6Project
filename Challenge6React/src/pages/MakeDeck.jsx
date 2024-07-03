@@ -5,11 +5,6 @@ import decksService from "../services/decks.service.js";
 import { useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 
-//TODO: Add Card Page Needs to be done
-//TODO: Authentication on the frontend
-//TODO: Testing on front and backend
-//TODO: Styling across the board
-
 const MakeDeck = ({ currentUser }) => {
   const location = useLocation();
   const [cards, setCards] = useState([]);
@@ -91,10 +86,14 @@ const MakeDeck = ({ currentUser }) => {
 
   if (!deck) {
     return (
-      <div>
+      <h1 className="text-center">
         Deck is undefined. Please select a deck through your My Decks page.
-      </div>
+      </h1>
     );
+  }
+
+  if (!currentUser) {
+    return <h1 className="text-center">Please log in to create a deck</h1>;
   }
 
   if (loading) {

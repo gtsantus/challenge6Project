@@ -10,25 +10,6 @@ const Dashboard = () => {
         <div className="card col py-4">
           <img
             src=""
-            className="card-img-top rounded-3"
-            alt="Create New Deck"
-          ></img>
-          <div className="card-body">
-            <div className="card-text">
-              <h2 className="text-center">
-                <Link
-                  to={"/MakeDeck"}
-                  className="link-underline link-underline-opacity-0 text-black"
-                >
-                  My Profile
-                </Link>
-              </h2>
-            </div>
-          </div>
-        </div>
-        <div className="card col py-4">
-          <img
-            src=""
             className="card-img-top rounded-3 img-fluid"
             alt="View Your Decks"
           ></img>
@@ -39,7 +20,7 @@ const Dashboard = () => {
                   to={"/ViewDecks"}
                   className="link-underline link-underline-opacity-0 text-black"
                 >
-                  My Opportunities
+                  View My Decks
                 </Link>
               </h2>
             </div>
@@ -54,7 +35,7 @@ const Dashboard = () => {
                   to={"/ViewCards"}
                   className="link-underline link-underline-opacity-0 text-black"
                 >
-                  New Opportunities
+                  View All Cards
                 </Link>
               </h2>
             </div>

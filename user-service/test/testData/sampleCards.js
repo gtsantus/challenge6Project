@@ -24,7 +24,7 @@ const testDataCards = {
             cardText: "Summon a Minion",
             flavourText: "Wow! The Flavor!",
             legendary: true,
-            rows: []
+            rows: [Front, Middle, Back]
         }
 
     ]

@@ -5,22 +5,25 @@ import { useState, useEffect } from "react";
 const ViewCards = () => {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [issue, setIssue] = useState(false);
 
   useEffect(() => {
     const fetchCards = async () => {
       try {
         const cards = await cardService.getAllCards();
         setCards(cards || []);
+        setLoading(false);
       } catch (error) {
         console.error("Failed to fetch cards:", error);
         setCards([]);
-      } finally {
-        setLoading(false);
+        setIssue(true);
       }
     };
 
     fetchCards();
   }, []);
+
+  if (issue) return <h1>Failed to fetch cards</h1>;
 
   if (loading) {
     return <div>Loading...</div>;

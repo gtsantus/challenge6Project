@@ -36,11 +36,18 @@ const getCurrentUser = async () => {
     return user ? JSON.parse(user) : undefined;
 };
 
+const validatePassword = (password) => {
+    const passwordRegEx =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[1-9])(?=.*[@$!%*?&])[A-Za-zd@$!%*?&1-9]{8,}$/;
+    return passwordRegEx.test(password);
+  };
+
 const authService = {
 	login,
 	signUp,
 	logout,
 	getCurrentUser,
+	validatePassword
 };
 
 export default authService;

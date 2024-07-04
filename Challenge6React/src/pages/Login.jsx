@@ -15,26 +15,20 @@ const LoginScreen = ({ setCurrentUser }) => {
   }
 
   const loginAttempt = async () => {
-    if (validatePassword()) {
-      const user = await authService.login(username, password);
+    if (authService.validatePassword(password)) {
+      await authService.login(username, password);
       setInvalidDetails(false);
       if (authService.getCurrentUser()) {
         setCurrentUser(authService.getCurrentUser());
         navigate("/");
       } else {
-        console.dir(user);
         setInvalidDetails(true);
+        console.log("Invalid Username or Password");
       }
     } else {
       setInvalidDetails(true);
       console.log("Invalid Username or Password");
     }
-  };
-
-  const validatePassword = () => {
-    const passwordRegEx =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[1-9])(?=.*[@$!%*?&])[A-Za-zd@$!%*?&1-9]{8,}$/;
-    return passwordRegEx.test(password);
   };
 
   return (

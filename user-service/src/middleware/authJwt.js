@@ -5,7 +5,7 @@ import User from "../models/User.model.js";
 //const Role = model.role;
 
 export default class AuthMiddleware{
-    static verifyToken = (req, res, next) => {
+    static verifyToken(req, res, next) {
         let token;
         if (req.cookies.user) {
             const userObj = JSON.parse(req.cookies.user);

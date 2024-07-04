@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 const ViewDecks = ({ currentUser }) => {
   const [userId, setUserId] = useState(currentUser?.id);
   const [loading, setLoading] = useState(true);
+  const [issue, setIssue] = useState(false);
   const [decks, setDecks] = useState([]);
   const [newDeckName, setNewDeckName] = useState("");
   const [newDeckFaction, setNewDeckFaction] = useState("Tech");
@@ -19,9 +20,13 @@ const ViewDecks = ({ currentUser }) => {
   useEffect(() => {
     async function fetchCards() {
       if (userId) {
-        const decks = await decksService.getDecks(userId);
-        setDecks(decks);
-        setLoading(false);
+        try {
+          const decks = await decksService.getDecks(userId);
+          setDecks(decks);
+          setLoading(false);
+        } catch {
+          setIssue(true);
+        }
       } else {
         setLoading(false);
       }
@@ -51,6 +56,10 @@ const ViewDecks = ({ currentUser }) => {
       setDecks([...updatedDecks]);
     }
   };
+
+  if (issue) {
+    return <div>Failed to fetch decks</div>;
+  }
 
   if (loading) {
     return <div>Loading...</div>;

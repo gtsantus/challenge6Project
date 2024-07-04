@@ -6,11 +6,19 @@ const AddCard = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const role = authService.getCurrentUser().admin;
+    const fetchRole = async () => {
+      try {
+        const role = await authService.getCurrentUser();
+        console.log(role);
+        if (role.admin === true) {
+          setIsAdmin(true);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user role:", error);
+      }
+    };
 
-    if (role === true) {
-      setIsAdmin(true);
-    }
+    fetchRole();
   }, []);
 
   const [cardData, setCardData] = useState({
@@ -124,6 +132,7 @@ const AddCard = () => {
                 onChange={handleInputChange}
                 required
                 className="form-select"
+                data-testid="Select Type"
               >
                 <option value="">Select Type</option>
                 <option value="Commander">Commander</option>
@@ -239,7 +248,7 @@ const AddCard = () => {
                 name="flavorText"
                 value={cardData.flavorText}
                 onChange={handleInputChange}
-                placeholder="Flavor Text"
+                placeholder="Flavour Text"
                 className="form-control"
               />
             </div>

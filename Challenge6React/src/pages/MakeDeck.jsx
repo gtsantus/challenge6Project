@@ -56,7 +56,7 @@ const MakeDeck = ({ currentUser }) => {
     if (deckRef.current.cards.length > 0) {
       fetchDeckCardsDetails();
     }
-  }, []);
+  }, [deck]);
 
   const addToDeck = (cardToAdd) => {
     if (!deck.cards.find((card) => card._id === cardToAdd._id)) {
@@ -84,16 +84,16 @@ const MakeDeck = ({ currentUser }) => {
     }));
   };
 
-  if (!deck) {
-    return (
-      <h1 className="text-center">
-        Deck is undefined. Please select a deck through your My Decks page.
-      </h1>
-    );
-  }
-
   if (!currentUser) {
     return <h1 className="text-center">Please log in to create a deck</h1>;
+  }
+
+  if (deck.name === "") {
+    return (
+      <h1 className="text-center">
+        Deck not loaded. Please select a deck through your My Decks page.
+      </h1>
+    );
   }
 
   if (loading) {

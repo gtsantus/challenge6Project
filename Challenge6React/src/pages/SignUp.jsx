@@ -10,7 +10,7 @@ const SignUp = () => {
 
   const signUpAttempt = async (e) => {
     e.preventDefault();
-    if (validatePassword()) {
+    if (authService.validatePassword(password)) {
       const signUpResponse = await authService.signUp(username, password);
       setInvalidDetails(false);
       if (authService.getCurrentUser()) {
@@ -23,13 +23,6 @@ const SignUp = () => {
       setInvalidDetails(true);
       console.log("invalid Username or Password");
     }
-  };
-
-  //this needs to be in a service
-  const validatePassword = () => {
-    const passwordRegEx =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[1-9])(?=.*[@$!%*?&])[A-Za-zd@$!%*?&1-9]{8,}$/;
-    return passwordRegEx.test(password);
   };
 
   return (

@@ -15,7 +15,6 @@ import CardRoutes from "../src/routes/Cards.routes.js";
 import Config from "../src/config/Config.js";
 import Database from "../src/database/Database.js";
 import jwt from "jsonwebtoken";
-import e from 'express';
 
 chai.use(chaiHttp);
 

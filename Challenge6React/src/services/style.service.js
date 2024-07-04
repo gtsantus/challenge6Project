@@ -53,8 +53,12 @@ const getFactionColour = (faction) => {
 };
     
 const formatCardText = (text, displayCard) => {
-  if (text && text.trim !== "") {
-      return text.split(" ").map((word, index, words) => {
+
+  if (!text || text.trim() === "") {
+    return [];
+  }
+
+  return text.split(" ").map((word, index, words) => {
     const nextWord = words[index + 1] ? ` ${words[index + 1]}` : "";
     const phrase = word + nextWord;
     const isLeading = word === "Leading:";
@@ -63,11 +67,10 @@ const formatCardText = (text, displayCard) => {
     const prefix =
       index === 0 ? "" : isLeading || isPerfectCast ? '\n' : " ";
     const modifiedWord = isPerfectCast ? phrase : word;
+      
 
     return { key: index, prefix, word: modifiedWord };
   });
-  }
-
 };
 
 const styleService = {

@@ -43,7 +43,10 @@ const App = () => {
             path="/Login"
             element={<Login setCurrentUser={setCurrentUser} />}
           />
-          <Route path="/SignUp" element={<SignUp />} />
+          <Route
+            path="/SignUp"
+            element={<SignUp setCurrentUser={setCurrentUser} />}
+          />
           <Route path="/AddCard" element={<AddCard />} />
           <Route path="/ViewCards" element={<ViewCards />} />
           <Route

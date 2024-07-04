@@ -1,8 +1,9 @@
 import { useState } from "react";
 import authService from "../services/auth.service.js";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
-const SignUp = () => {
+const SignUp = ({ setCurrentUser }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [invalidDetails, setInvalidDetails] = useState(false);
@@ -14,7 +15,8 @@ const SignUp = () => {
       const signUpResponse = await authService.signUp(username, password);
       setInvalidDetails(false);
       if (authService.getCurrentUser()) {
-        navigate("/dashboard");
+        setCurrentUser(authService.getCurrentUser());
+        navigate("/");
       } else {
         console.dir(signUpResponse);
         setInvalidDetails(true);
@@ -73,4 +75,8 @@ const SignUp = () => {
     </div>
   );
 };
+SignUp.propTypes = {
+  setCurrentUser: PropTypes.func.isRequired,
+};
+
 export default SignUp;

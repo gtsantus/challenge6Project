@@ -1,6 +1,7 @@
 import { useNavigate, Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import authService from "../services/auth.service";
+import logo from "./images/Card Logo.jpg";
 
 const Header = ({ currentUser, setCurrentUser, showAdminContent }) => {
   const loggedIn = Boolean(currentUser);
@@ -24,7 +25,7 @@ const Header = ({ currentUser, setCurrentUser, showAdminContent }) => {
       >
         <div className="d-flex align-items-center">
           <img
-            src=""
+            src={logo}
             alt="Logo"
             className="me-5"
             style={{ width: "75px", height: "75px" }}

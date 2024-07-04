@@ -10,9 +10,9 @@ const getDecks = async (id) => {
 	}
 };
 
-const updateDeck = async (id, deckName, deckCards) => {
+const updateDeck = async (id, name, cards, faction) => {
 	try {
-		const response = await axios.put(`http://localhost:4000/updateDeck`, { id, deckName, deckCards, withCredentials: true });
+		const response = await axios.put(`http://localhost:4000/updateDeck`, { id, name, cards, faction}, { withCredentials: true });
 		return response.data;
 	} catch (e) {
 		console.log(e.message);
@@ -20,9 +20,9 @@ const updateDeck = async (id, deckName, deckCards) => {
 	}
 };
 
-const addDeck = async (id, deckName, deckFaction, deckCards) => {
-    try {
-        const response = await axios.post(`http://localhost:4000/addDeck`, { id, deckName, deckFaction, deckCards, withCredentials: true });
+const addDeck = async (id, name, faction, cards) => {
+	try {
+		const response = await axios.post(`http://localhost:4000/addDeck`, { id, name, faction, cards }, { withCredentials: true });
         return response.data;
     } catch (e) {
         console.log(e.message);

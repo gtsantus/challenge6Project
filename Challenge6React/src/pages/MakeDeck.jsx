@@ -56,21 +56,30 @@ const MakeDeck = ({ currentUser }) => {
     if (deckRef.current.cards.length > 0) {
       fetchDeckCardsDetails();
     }
-  }, [deck]);
+  }, []);
 
   const addToDeck = (cardToAdd) => {
-    if (!deck.cards.find((card) => card._id === cardToAdd._id)) {
-      const updatedDeck = {
-        ...deck,
-        cards: [...deck.cards, cardToAdd],
-      };
-      setDeck(updatedDeck);
+    if (deck.cards.length >= 40) {
+      alert("Deck is full!");
+    } else {
+      if (!deck.cards.find((card) => card._id === cardToAdd._id)) {
+        const updatedDeck = {
+          ...deck,
+          cards: [...deck.cards, cardToAdd],
+        };
+        setDeck(updatedDeck);
+      }
     }
   };
 
   const saveDeck = () => {
     if (currentUser && currentUser.id) {
-      decksService.updateDeck(currentUser.id, deck.name, deck.cards);
+      decksService.updateDeck(
+        currentUser.id,
+        deck.name,
+        deck.cards,
+        deck.faction
+      );
       alert("Deck saved!");
     } else {
       console.error("User is not logged in.");

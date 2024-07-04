@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import CardsImage from "../components/images/three cards.jpg";
+import purpleDecksImage from "../components/images/purple decks.jpg";
 
 const Dashboard = () => {
   return (
@@ -7,13 +9,13 @@ const Dashboard = () => {
         className="d-flex flex-column align-items-center justify-content-center py-5 gap-3 px-5 flex-lg-row"
         style={{ minHeight: "calc(100vh - 132px)" }}
       >
-        <div className="card col py-4">
+        <div className="card col py-4 position-relative text-container">
           <img
-            src=""
-            className="card-img-top rounded-3 img-fluid"
+            src={purpleDecksImage}
+            className="card-img position-absolute"
             alt="View Your Decks"
-          ></img>
-          <div className="card-body">
+          />
+          <div className="card-body position-relative">
             <div className="card-text">
               <h2 className="text-center">
                 <Link
@@ -26,9 +28,13 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-        <div className=" card col py-4">
-          <img src="" className="card-img-top rounded-3" alt="View Cards"></img>
-          <div className="card-body">
+        <div className="card col py-4 position-relative text-container">
+          <img
+            src={CardsImage}
+            className="card-img position-absolute"
+            alt="View Cards"
+          />
+          <div className="card-body position-relative">
             <div className="card-text">
               <h2 className="text-center">
                 <Link

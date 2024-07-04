@@ -22,8 +22,13 @@ const ViewDecks = ({ currentUser }) => {
       if (userId) {
         try {
           const decks = await decksService.getDecks(userId);
-          setDecks(decks);
-          setLoading(false);
+          if (decks.message === "Request failed with status code 404") {
+            setDecks([]);
+            setLoading(false);
+          } else {
+            setDecks(decks);
+            setLoading(false);
+          }
         } catch {
           setIssue(true);
         }

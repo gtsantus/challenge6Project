@@ -25,7 +25,6 @@ export default class CardValidator {
     static handleErrors(req, res, next) {
         const errors = expressValidator.validationResult(req);
         if (!errors.isEmpty()) {
-            console.log(errors.array());
             return res.status(400).json({ errors: errors.array() });
         }
         next();

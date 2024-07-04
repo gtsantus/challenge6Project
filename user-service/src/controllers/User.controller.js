@@ -53,7 +53,12 @@ export default class UserController {
                 console.log("ERROR: ", e.message || e);
                 res.status(409).json({ message: e.message });
                 return;
-            } else {
+            } else if (e.message === "User not found") {
+                console.log("ERROR: ", e.message || e);
+                res.status(409).json({ message: e.message });
+                return;
+            }
+            else {
                 console.log("ERROR: Add Deck Error", e.message || e);
                 res.status(500).json({ message: e.message });
             }
@@ -75,7 +80,7 @@ export default class UserController {
                 return;
             } else {
                 console.log("ERROR: Update Deck Error", e.message || e);
-                res.status(400).json({ message: e.message });
+                res.status(500).json({ message: e.message });
             }
         }
     }
@@ -88,7 +93,7 @@ export default class UserController {
             if (e.message === "User not found") {
                 console.log("ERROR: Get Decks Error", e.message || e);
                 res.status(409).json({ message: e.message });
-            }else if(e.message === "User has no decks") {
+            }else if(e.message === "No decks found") {
                 console.log("ERROR: Get Decks Error", e.message || e);
                 res.status(404).json({ message: e.message });
             }else {

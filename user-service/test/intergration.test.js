@@ -20,7 +20,7 @@ import e from 'express';
 chai.use(chaiHttp);
 
 
-xdescribe('Testing user login and sign up', () => {
+describe('Testing user login and sign up', () => {
     let userServer;
     let database;
     let request;
@@ -48,7 +48,7 @@ xdescribe('Testing user login and sign up', () => {
             throw new Error();
         };
         try {
-            await User.insertMany(testData);
+            await User.insertMany(testData.users);
             console.log("Inserted test data");
         } catch (e) {
             console.log(e);
@@ -157,7 +157,7 @@ xdescribe('Testing user login and sign up', () => {
 
 });
  
-xdescribe('Testing Card Services', () => {
+describe('Testing Card Services', () => {
     let userServer;
     let database;
     let request;
@@ -265,10 +265,10 @@ xdescribe('Testing Card Services', () => {
         });
 
         it('should return a 403 error if the user sent is not an admin', async () => {
-            const token = jwt.sign({ id: "6685de316782b4f828607b57" }, process.env.JWT_SECRET, {
+            const token = jwt.sign({ id: "6685e6046782b4f828607b5c" }, process.env.JWT_SECRET, {
                 expiresIn: 86400,
             });
-            Cookie = 'user=' + JSON.stringify({ accessToken: token, id: "6685de316782b4f828607b57", admin: true })
+            Cookie = 'user=' + JSON.stringify({ accessToken: token, id: "6685e6046782b4f828607b5c", admin: true })
             const res = await request
                 .post('/addCard')
                 .set('Cookie', Cookie)
@@ -387,10 +387,11 @@ xdescribe('Testing Card Services', () => {
     });
 });
 
-xdescribe('Testing Deck Services', () => {
+describe('Testing Deck Services', () => {
     let userServer;
     let database;
     let request;
+    let Cookie;
 
     before(async () => {
         Config.load();
@@ -415,13 +416,17 @@ xdescribe('Testing Deck Services', () => {
             throw new Error();
         };
         try {
-            await User.insertMany(testData);
+            await User.insertMany(testData.users);
             console.log("Inserted test data");
         } catch (e) {
             console.log(e);
             console.log("Error inserting test data");
             throw new Error();
         };
+        const token = jwt.sign({ id: "60f3e3f3e4e4c7e6f3b0d2b7" }, process.env.JWT_SECRET, {
+                expiresIn: 86400,
+        });
+        Cookie = 'user=' + JSON.stringify({ accessToken: token, id: "60f3e3f3e4e4c7e6f3b0d2b7", admin: true })
     });
 
     after(async () => {
@@ -429,26 +434,116 @@ xdescribe('Testing Deck Services', () => {
         await database.close();
     });
 
-        describe('POST /addDeck', () => {
+    describe('POST /addDeck', () => {
         it('should add a deck to the user', async () => {
             const res = await request
                 .post('/addDeck')
-                .send({ id: '60f3e3f3e4e4c7e6f3b0d2b7', deckName: "newDeck", deckCards: testDataCards.cards[0], deckFaction: "Wizard" });
+                .set('Cookie', Cookie)
+                .send({ id: '60f3e3f3e4e4c7e6f3b0d2b7', name: "newDeck", cards: testDataCards.cards, faction: "Wizard" });
             expect(res).to.have.status(200);
             expect(res.body[1]).to.have.property('name', 'newDeck');
             expect(res.body[1]).to.have.property("faction", "Wizard");
             expect(res.body[1]).to.have.property("cards");
-            expect(res.body[1].cards).to.have.lengthOf(1);
+            expect(res.body[1].cards).to.have.lengthOf(2);
+        });
+
+        it('should return a 409 error if the deck already exists', async () => {
+            const res = await request
+                .post('/addDeck')
+                .set('Cookie', Cookie)
+                .send({ id: '60f3e3f3e4e4c7e6f3b0d2b7', name: "testDeck", cards: testDataCards.cards, faction: "Wizard" });
+            expect(res).to.have.status(409);
+        });
+
+        it('should return a 409 error if the user could not be found', async () => {
+            const res = await request
+                .post('/addDeck')
+                .set('Cookie', Cookie)
+                .send({ id: '60f3e3f3e4e4c7e6f3b0d2b8', name: "testDeck", cards: testDataCards.cards, faction: "Wizard" });
+            expect(res).to.have.status(409);
+        });
+
+        it('should return a 400 error if a field is missing', async () => {
+            const res = await request
+                .post('/addDeck')
+                .set('Cookie', Cookie)
+                .send({ id: '60f3e3f3e4e4c7e6f3b0d2b7', cards: testDataCards.cards, faction: "Wizard" });
+            expect(res).to.have.status(400);
+        });
+
+        it('should return a 400 error if a name is not a string', async () => {
+            const res = await request
+                .post('/addDeck')
+                .set('Cookie', Cookie)
+                .send({ id: '60f3e3f3e4e4c7e6f3b0d2b7', name: 123, cards: testDataCards.cards, faction: "Wizard" });
+            expect(res).to.have.status(400);
+        });
+
+        it('should return a 400 error if cards is not an array', async () => {
+            const res = await request
+                .post('/addDeck')
+                .set('Cookie', Cookie)
+                .send({ id: '60f3e3f3e4e4c7e6f3b0d2b7', name: "newDeck", cards: 123, faction: "Wizard" });
+            expect(res).to.have.status(400);
+        });
+
+        it('should return a 400 error if faction is not a string', async () => {
+            const res = await request
+                .post('/addDeck')
+                .set('Cookie', Cookie)
+                .send({ id: '60f3e3f3e4e4c7e6f3b0d2b7', name: "newDeck", cards: testDataCards.cards, faction: 123 });
+            expect(res).to.have.status(400);
+        });
+
+        it('should return a 400 error if faction is not a valid enum', async () => {
+            const res = await request
+                .post('/addDeck')
+                .set('Cookie', Cookie)
+                .send({ id: '60f3e3f3e4e4c7e6f3b0d2b7', name: "newDeck", cards: testDataCards.cards, faction: "Invalid" });
+            expect(res).to.have.status(400);
+        });
+
+        it('should return a 500 error there is another error', async () => {
+            const res = await request
+                .post('/addDeck')
+                .set('Cookie', Cookie)
+                .send({ id: 'Invalid', name: "newDeck", cards: testDataCards.cards, faction: "Wizard" });
+            expect(res).to.have.status(500);
         });
     });
 
     describe('POST /updateDeck', () => {
         it('should update the deck of the user', async () => {
             const res = await request
-                .post('/updateDeck')
-                .send({ id: '60f3e3f3e4e4c7e6f3b0d2b7', deckName: 'testDeck', deckCards: testDataCards.cards });
+                .put('/updateDeck')
+                .set('Cookie', Cookie)
+                .send({ id: '60f3e3f3e4e4c7e6f3b0d2b7', name: 'testDeck', cards: testDataCards.cards, faction: "Wizard"});
             expect(res).to.have.status(200);
             expect(res.body[0].cards).to.have.lengthOf(2);
+        });
+
+        it('should return a 409 error if the deck is not found', async () => {
+            const res = await request
+                .put('/updateDeck')
+                .set('Cookie', Cookie)
+                .send({ id: '60f3e3f3e4e4c7e6f3b0d2b7', name: 'Invalid', cards: testDataCards.cards, faction: "Wizard"});
+            expect(res).to.have.status(409);
+        });
+
+        it('should return a 409 error if the user is not found', async () => {
+            const res = await request
+                .put('/updateDeck')
+                .set('Cookie', Cookie)
+                .send({ id: '60f3e3f3e4e4c7e6f3b0d2b8', name: 'testDeck', cards: testDataCards.cards, faction: "Wizard" });
+            expect(res).to.have.status(409);
+        });
+
+        it('should return a 500 error if an error is thrown', async () => {
+            const res = await request
+                .put('/updateDeck')
+                .set('Cookie', Cookie)
+                .send({ id: 'Invalid', name: 'testDeck', cards: testDataCards.cards, faction: "Wizard" });
+            expect(res).to.have.status(500);
         });
     });
 
@@ -456,47 +551,68 @@ xdescribe('Testing Deck Services', () => {
         it('should return the decks of the user', async () => {
             const res = await request
                 .get('/getDecks')
+                .set('Cookie', Cookie)
                 .query({ id: '60f3e3f3e4e4c7e6f3b0d2b7' });
             expect(res).to.have.status(200);
             expect(res.body).to.have.lengthOf(1);
         });
 
-        it('should return a 404 error if the user is not found', async () => {
+        it('should return a 409 error if the user is not found', async () => {
             const res = await request
                 .get('/getDecks')
+                .set('Cookie', Cookie)
                 .query({ id: '60f3e3f3e4e4c7e6f3b0d2b8' });
+            expect(res).to.have.status(409);
+        });
+
+        it('should return a 404 error if the user has no decks', async () => {
+            const res = await request
+                .get('/getDecks')
+                .set('Cookie', Cookie)
+                .query({ id: '6685e6046782b4f828607b5c' });
             expect(res).to.have.status(404);
         });
 
         it('should return a 500 error if there is an error', async () => {
             const res = await request
                 .get('/getDecks')
-                .query({ id: '60f3e3f3e4e4c7e6f3b0d2b9' });
+                .set('Cookie', Cookie)
+                .query({ id: 'Invalid' });
             expect(res).to.have.status(500);
         });
     });
-    //should error nicely if user has no decks
 
     describe('GET /deleteDeck', () => { 
         it('should delete a deck from the user', async () => {
             const res = await request
                 .delete('/deleteDeck')
+                .set('Cookie', Cookie)
                 .query({ id: '60f3e3f3e4e4c7e6f3b0d2b7', deckId: '668407f9d3d06290b766a527' });
             expect(res).to.have.status(200);
             expect(res.body).to.have.lengthOf(0);
         });
 
-        it('should return a 404 error if the user is not found', async () => {
+        it('should return a 409 error if the user is not found', async () => {
             const res = await request
                 .delete('/deleteDeck')
+                .set('Cookie', Cookie)
                 .query({ id: '60f3e3f3e4e4c7e6f3b0d2b8', deckId: '668407f9d3d06290b766a527' });
-            expect(res).to.have.status(404);
+            expect(res).to.have.status(409);
+        });
+
+        it('should return a 409 error if the deck is not found', async () => {
+            const res = await request
+                .delete('/deleteDeck')
+                .set('Cookie', Cookie)
+                .query({ id: '60f3e3f3e4e4c7e6f3b0d2b7', deckId: '668407f9d3d06290b766a528' });
+            expect(res).to.have.status(409);
         });
 
         it('should return a 500 error if there is an error', async () => {
             const res = await request
                 .delete('/deleteDeck')
-                .query({ id: '60f3e3f3e4e4c7e6f3b0d2b9', deckId: '60f3e3f3e4e4c7e6f3b0d2b7' });
+                .set('Cookie', Cookie)
+                .query({ id: 'Invalid', deckId: '60f3e3f3e4e4c7e6f3b0d2b7' });
             expect(res).to.have.status(500);
         });
     });

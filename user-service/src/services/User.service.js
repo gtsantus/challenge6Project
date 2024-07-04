@@ -44,28 +44,28 @@ export default class UserService {
         };
     }
 
-    addDeck = async ({ id, deckName, deckCards, deckFaction }) => {
+    addDeck = async ({ id, name, cards, faction }) => {
         const user = await User.findById(id);
         if (!user) {
             throw new Error("User not found");
-        } else if (user.decks.find(deck => deck.name === deckName)) {
+        } else if (user.decks.find(deck => deck.name === name)) {
             throw new Error("That Deck already exists");
         }
-        user.decks.push({ name: deckName, faction: deckFaction, cards: deckCards });
+        user.decks.push({ name: name, faction: faction, cards: cards });
         await user.save();
         return user.decks;
     }
 
-    updateDeck = async ({ id, deckName, deckCards }) => {
+    updateDeck = async ({ id, name, cards }) => {
         const user = await User.findById(id);
         if (!user) {
             throw new Error("User not found");
         }
-        const deck = user.decks.find(deck => deck.name === deckName);
+        const deck = user.decks.find(deck => deck.name === name);
         if (!deck) {
             throw new Error("Deck not found");
         }
-        deck.cards = deckCards;
+        deck.cards = cards;
         await user.save();
         return user.decks;
     }
@@ -74,7 +74,7 @@ export default class UserService {
         const user = await User.findById(id);
         if (!user) {
             throw new Error("User not found");
-        }else if (!user.decks) {
+        }else if (user.decks.length === 0) {
             throw new Error("No decks found");
         }
         return user.decks;
